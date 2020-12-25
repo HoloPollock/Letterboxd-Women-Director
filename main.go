@@ -18,24 +18,24 @@ import (
 )
 
 type person struct {
-	Adult bool `json:"adult"`
-	CreditID string `json:"credit_id"`
-	Department string `json:"department"`
-	Gender int `json:"gender"`
-	ID int `json:"id"`
-	Job string `json:"job"`
-    KnownForDepartment string `json:"known_for_department"`
-	Name string `json:"name"`
-	OriginalName string `json:"original_name"`
-	Popularity float32 `json:"popularity"`
- 	ProfilePath string `json:"profile_path"`
+	Adult              bool    `json:"adult"`
+	CreditID           string  `json:"credit_id"`
+	Department         string  `json:"department"`
+	Gender             int     `json:"gender"`
+	ID                 int     `json:"id"`
+	Job                string  `json:"job"`
+	KnownForDepartment string  `json:"known_for_department"`
+	Name               string  `json:"name"`
+	OriginalName       string  `json:"original_name"`
+	Popularity         float32 `json:"popularity"`
+	ProfilePath        string  `json:"profile_path"`
 }
 
 type watched struct {
 	Date string
 	Name string
 	Year int
-	URL string
+	URL  string
 }
 
 var apiKey string = os.Getenv("TMDB_API_KEY")
@@ -52,26 +52,26 @@ func main() {
 		log.Fatal(err)
 	}
 	_, err = csvFile.Seek(int64(len(row1)), io.SeekStart)
-    if err != nil {
-		log.Fatal(err) 
-    }
+	if err != nil {
+		log.Fatal(err)
+	}
 
-    reader := csv.NewReader(csvFile)
+	reader := csv.NewReader(csvFile)
 	for {
-        line, err := reader.Read()
-        if err == io.EOF {
-            break
-        } else if err != nil {
-            log.Fatal(err)
-        }
+		line, err := reader.Read()
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			log.Fatal(err)
+		}
 		year, _ := strconv.Atoi(line[2])
-		film := watched {
+		film := watched{
 			Date: line[0],
 			Name: line[1],
 			Year: year,
-			URL: line[3],
+			URL:  line[3],
 		}
-		
+
 		wg.Add(1)
 		go isWomen(film.URL, &wg)
 	}
@@ -80,7 +80,6 @@ func main() {
 	fmt.Printf("Total Able To Get: %d\n", total)
 	fmt.Printf("Total percentage %.3f\n", float64(women)/float64(total)*100)
 }
-
 
 func isWomen(url string, wg *sync.WaitGroup) {
 	hasWomen := false
@@ -91,7 +90,7 @@ func isWomen(url string, wg *sync.WaitGroup) {
 		id = e.Attr("data-tmdb-id")
 	})
 	c.Visit(url)
-	
+
 	tmdbURL := fmt.Sprintf(
 		"%s%s%s?api_key=%s",
 		"https://api.themoviedb.org/3/movie/",
@@ -102,7 +101,7 @@ func isWomen(url string, wg *sync.WaitGroup) {
 	res, err := http.Get(tmdbURL)
 	if err != nil {
 		log.Fatal(err)
-	} 
+	}
 	if res.Body != nil {
 		defer res.Body.Close()
 	}
