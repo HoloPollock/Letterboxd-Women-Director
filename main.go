@@ -10,7 +10,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 	"sync"
 
 	"github.com/gocolly/colly"
@@ -18,24 +17,9 @@ import (
 )
 
 type person struct {
-	Adult              bool    `json:"adult"`
-	CreditID           string  `json:"credit_id"`
-	Department         string  `json:"department"`
 	Gender             int     `json:"gender"`
-	ID                 int     `json:"id"`
 	Job                string  `json:"job"`
-	KnownForDepartment string  `json:"known_for_department"`
 	Name               string  `json:"name"`
-	OriginalName       string  `json:"original_name"`
-	Popularity         float32 `json:"popularity"`
-	ProfilePath        string  `json:"profile_path"`
-}
-
-type watched struct {
-	Date string
-	Name string
-	Year int
-	URL  string
 }
 
 var apiKey string = os.Getenv("TMDB_API_KEY")
@@ -64,16 +48,10 @@ func main() {
 		} else if err != nil {
 			log.Fatal(err)
 		}
-		year, _ := strconv.Atoi(line[2])
-		film := watched{
-			Date: line[0],
-			Name: line[1],
-			Year: year,
-			URL:  line[3],
-		}
+		url := line[3]
 
 		wg.Add(1)
-		go isWomen(film.URL, &wg)
+		go isWomen(url, &wg)
 	}
 	wg.Wait()
 	fmt.Printf("With Women: %d\n", women)
