@@ -120,8 +120,7 @@ func isWomen(url string, wg *sync.WaitGroup) {
 		for _, v := range crew {
 			var crew person
 			mapstructure.Decode(v, &crew)
-			if crew.Job != "Director" {
-			} else {
+			if crew.Job == "Director" {
 				if crew.Gender == 1 {
 					hasWomen = true
 				}
